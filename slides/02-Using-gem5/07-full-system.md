@@ -260,7 +260,7 @@ The general structure of the Packer file would be the same but with a few key ch
     Let's get the base Ubuntu 24.04 image from gem5 resources and unzip it.
 
     ```bash
-    wget https://storage.googleapis.com/dist.gem5.org/dist/develop/images/x86/ubuntu-24-04/x86-ubuntu-24-04.gz
+    wget https://dist.gem5.org/dist/develop/images/x86/ubuntu-24-04/x86-ubuntu-24-04.gz
     gzip -d x86-ubuntu-24-04.gz
     ```
 
