@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Update the submodules
 git submodule update --init --recursive
@@ -17,16 +18,17 @@ git config --global pull.rebase true
 
 popd # gem5
 
-# Pre-download the resources we use
+if [ "${GEM5_BOOTCAMP_FETCH_GPU_RESOURCES:-0}" = "1" ]; then
+  # Pre-download the larger GPU resources used by the optional GPU module.
+  gem5 pre-download-resources.py
+  docker pull ghcr.io/gem5/gcn-gpu:v24-0
+  wget http://dist.gem5.org/dist/v24-0/test-progs/square/square
+  wget https://dist.gem5.org/dist/v24-0/gpu-fs/kernel/vmlinux-gpu-ml-isca
 
-gem5 pre-download-resources.py
-
-docker pull ghcr.io/gem5/gcn-gpu:v24-0
-
-wget http://dist.gem5.org/dist/v24-0/test-progs/square/square
-
-wget  https://dist.gem5.org/dist/v24-0/gpu-fs/kernel/vmlinux-gpu-ml-isca
-
-# Note: this unzips to 55 GB so must in on /tmp.
-# See post_start.sh where it is unzipped each time the devcontainer starts
-wget  https://dist.gem5.org/dist/v24-0/gpu-fs/diskimage/x86-ubuntu-gpu-ml-isca.gz
+  # Note: this unzips to 55 GB, so it only fits on larger Codespace machines.
+  # See post_start.sh where it is unzipped each time the devcontainer starts.
+  wget https://dist.gem5.org/dist/v24-0/gpu-fs/diskimage/x86-ubuntu-gpu-ml-isca.gz
+else
+  echo "Skipping large GPU resource downloads for the standard Codespace profile."
+  echo "Set GEM5_BOOTCAMP_FETCH_GPU_RESOURCES=1 on a larger machine to fetch them."
+fi
